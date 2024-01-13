@@ -1,0 +1,8 @@
+---
+- hosts: app1
+  become: true
+  vars:
+    ansible_become_pass: ganeshbv
+  roles:
+    - role: tomcat
+    - role: maven

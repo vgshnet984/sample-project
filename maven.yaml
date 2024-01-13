@@ -1,0 +1,21 @@
+# tasks file for maven
+- name: add java8 repo
+  command: add-apt-repository ppa:webupd8team/java
+
+- name: apt update
+  apt:
+    update_cache: yes
+
+- name: download maven repo
+  command: >
+    chdir=/home/testfolder/Downloads/
+    wget https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.3.9/apache-maven-3.3.9-bin.tar.gz
+
+- name: extract maven tar
+  command: >
+    chdir=/opt/
+    sudo tar -xzvf /home/testfolder/Downloads/apache-maven-3.3.9-bin.tar.gz
+
+- name: install maven
+  command: >
+    sudo update-alternatives --install /usr/bin/mvn maven /opt/apache-maven-3.3.9/bin/mvn 1001
