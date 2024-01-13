@@ -1,0 +1,68 @@
+# tasks file for tomcat
+- name: apt-update
+  apt:
+    update_cache: yes
+
+- name: install curl
+  apt:
+    name: curl
+    state: present
+
+- name: install java jdk
+  apt:
+    name: default-jdk
+    state: present
+
+- name: add tomcat group
+  group:
+    name: tomcat
+    state: present
+
+- name: add user tomcat
+  user:
+    name: tomcat
+    shell: /bin/false
+    group: tomcat
+    home: /opt/tomcat
+
+- name: download tomcat repo
+  command: >
+    chdir=/home/edureka/Downloads
+    curl -O https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.31/bin/apache-tomcat-8.5.31.tar.gz
+
+- name: create tomcat directory
+  file:
+    path: /opt/tomcat
+    state: directory
+
+- name: install tomcat
+  become: true
+  become_user: tomcat
+  unarchive:
+    src: /home/edureka/Downloads/apache-tomcat-8.5.31.tar.gz
+    dest: /opt/tomcat
+    extra_opts: [--strip-components=1]
+    remote_src: true
+
+- name: tomcat directory permissions
+  file:
+    path: /opt/tomcat
+    group: tomcat
+    owner: tomcat
+    mode: 'g=rX'
+    recurse: yes
+
+- name: copy tomcat.service file to remote
+  copy:
+    src: /etc/ansible/roles/tomcat/files/tomcat.service
+    dest: /etc/systemd/system/
+
+- name: reload daemon
+  systemd:
+    daemon_reload: yes
+
+- name: restart tomcat
+  systemd:
+    name: tomcat
+    state: restarted
+    enabled: yes
