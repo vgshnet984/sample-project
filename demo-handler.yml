@@ -1,0 +1,22 @@
+---
+- name: start nginx
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Ensure nginx is installed
+      apt:
+        name: nginx
+        state: present
+
+    - name: Ensure nginx is started
+      service:
+        name: nginx
+        state: started
+
+- name: Run demo-role on all hosts
+  hosts: all
+  become: true
+  vars:
+    ansible_become_pass: edureka
+  roles:
+    - role: demo-role
